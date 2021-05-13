@@ -110,7 +110,7 @@ public class OpenDistroSecurityRestFilter {
             public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
                 org.apache.logging.log4j.ThreadContext.clearAll();
                 if (!checkAndAuthenticateRequest(request, channel, client)) {
-                    User user = threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_USER);
+                    User user = threadContext.getTransient(ConfigConstants.SECURITY_USER);
                     if (userIsSuperAdmin(user, adminDNs) || whitelistingSettings.checkRequestIsAllowed(request, channel, client)) {
                         original.handleRequest(request, channel, client);
                     }
@@ -129,7 +129,7 @@ public class OpenDistroSecurityRestFilter {
     private boolean checkAndAuthenticateRequest(RestRequest request, RestChannel channel,
                                                 NodeClient client) throws Exception {
 
-        threadContext.putTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN, AuditLog.Origin.REST.toString());
+        threadContext.putTransient(ConfigConstants.SECURITY_ORIGIN, AuditLog.Origin.REST.toString());
         
         if(HTTPHelper.containsBadHeader(request)) {
             final OpenSearchException exception = ExceptionUtils.createBadHeaderException();
@@ -139,7 +139,7 @@ public class OpenDistroSecurityRestFilter {
             return true;
         }
         
-        if(SSLRequestHelper.containsBadHeader(threadContext, ConfigConstants.OPENDISTRO_SECURITY_CONFIG_PREFIX)) {
+        if(SSLRequestHelper.containsBadHeader(threadContext, ConfigConstants.SECURITY_CONFIG_PREFIX)) {
             final OpenSearchException exception = ExceptionUtils.createBadHeaderException();
             log.error(exception);
             auditLog.logBadHeaders(request);
@@ -179,7 +179,7 @@ public class OpenDistroSecurityRestFilter {
                 return true;
             } else {
                 // make it possible to filter logs by username
-                org.apache.logging.log4j.ThreadContext.put("user", ((User)threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_USER)).getName());
+                org.apache.logging.log4j.ThreadContext.put("user", ((User)threadContext.getTransient(ConfigConstants.SECURITY_USER)).getName());
             }
         }
         

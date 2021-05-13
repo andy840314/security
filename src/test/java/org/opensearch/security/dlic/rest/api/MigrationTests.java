@@ -34,7 +34,7 @@ public class MigrationTests extends SingleClusterTest {
     public void testSecurityMigrate() throws Exception {
 
         final Settings settings = Settings.builder()
-            .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+            .put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
             .put("opendistro_security.ssl.http.enabled",true)
             .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/node-0-keystore.jks"))
             .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/truststore.jks"))
@@ -63,11 +63,11 @@ public class MigrationTests extends SingleClusterTest {
 
     @Test
     public void testSecurityMigrateInvalid() throws Exception {
-        final Settings settings = Settings.builder().put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+        final Settings settings = Settings.builder().put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
             .put("opendistro_security.ssl.http.enabled", true)
             .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/node-0-keystore.jks"))
             .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/truststore.jks"))
-            .put(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
+            .put(ConfigConstants.SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
             .build();
         setup(Settings.EMPTY, new DynamicSecurityConfig().setSecurityInternalUsers("internal_users2.yml").setLegacy(), settings, true);
         final RestHelper rh = restHelper(); //ssl resthelper
@@ -92,7 +92,7 @@ public class MigrationTests extends SingleClusterTest {
 
     @Test
     public void testSecurityValidate() throws Exception {
-        final Settings settings = Settings.builder().put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+        final Settings settings = Settings.builder().put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
             .put("opendistro_security.ssl.http.enabled", true)
             .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/node-0-keystore.jks"))
             .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/truststore.jks")).build();
@@ -112,11 +112,11 @@ public class MigrationTests extends SingleClusterTest {
 
     @Test
     public void testSecurityValidateWithInvalidConfig() throws Exception {
-        final Settings settings = Settings.builder().put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+        final Settings settings = Settings.builder().put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
             .put("opendistro_security.ssl.http.enabled", true)
             .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/node-0-keystore.jks"))
             .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/truststore.jks"))
-            .put(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
+            .put(ConfigConstants.SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
             .build();
         setup(Settings.EMPTY, new DynamicSecurityConfig().setSecurityInternalUsers("internal_users2.yml").setLegacy(), settings, true);
         final RestHelper rh = restHelper(); //ssl resthelper
@@ -138,11 +138,11 @@ public class MigrationTests extends SingleClusterTest {
 
     @Test
     public void testSecurityMigrateWithEmptyPassword() throws Exception{
-        final Settings settings = Settings.builder().put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+        final Settings settings = Settings.builder().put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
                 .put("opendistro_security.ssl.http.enabled", true)
                 .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/node-0-keystore.jks"))
                 .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("migration/truststore.jks"))
-                .put(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
+                .put(ConfigConstants.SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, true)
                 .build();
         setup(Settings.EMPTY, new DynamicSecurityConfig().setSecurityInternalUsers("internal_users2.yml").setLegacy(), settings, true);
         final RestHelper rh = restHelper(); //ssl resthelper

@@ -87,7 +87,7 @@ public class KibanaInfoAction extends BaseRestHandler {
                 
                 try {
                     
-                    final User user = (User)threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_USER);
+                    final User user = (User)threadContext.getTransient(ConfigConstants.SECURITY_USER);
 
                     builder.startObject();
                     builder.field("user_name", user==null?null:user.getName());

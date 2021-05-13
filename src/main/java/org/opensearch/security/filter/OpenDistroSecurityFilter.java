@@ -129,7 +129,7 @@ public class OpenDistroSecurityFilter implements ActionFilter {
         this.cs = cs;
         this.compatConfig = compatConfig;
         this.indexResolverReplacer = indexResolverReplacer;
-        this.immutableIndicesMatcher = WildcardMatcher.from(settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_IMMUTABLE_INDICES, Collections.emptyList()));
+        this.immutableIndicesMatcher = WildcardMatcher.from(settings.getAsList(ConfigConstants.SECURITY_COMPLIANCE_IMMUTABLE_INDICES, Collections.emptyList()));
         this.rolesInjector = new RolesInjector();
         this.backendRegistry = backendRegistry;
         log.info("{} indices are made immutable.", immutableIndicesMatcher);
@@ -162,8 +162,8 @@ public class OpenDistroSecurityFilter implements ActionFilter {
             ActionListener<Response> listener, ActionFilterChain<Request, Response> chain) {
         try {
 
-            if(threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN) == null) {
-                threadContext.putTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN, AuditLog.Origin.LOCAL.toString());
+            if(threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN) == null) {
+                threadContext.putTransient(ConfigConstants.SECURITY_ORIGIN, AuditLog.Origin.LOCAL.toString());
             }
 
             final ComplianceConfig complianceConfig = auditLog.getComplianceConfig();
@@ -172,16 +172,16 @@ public class OpenDistroSecurityFilter implements ActionFilter {
             }
             final Set<String> injectedRoles = rolesInjector.injectUserAndRoles(threadContext);
             boolean enforcePrivilegesEvaluation = false;
-            User user = threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_USER);
+            User user = threadContext.getTransient(ConfigConstants.SECURITY_USER);
             if(user == null && (user = backendRegistry.authenticate(request, null, task, action)) != null) {
-                threadContext.putTransient(ConfigConstants.OPENDISTRO_SECURITY_USER, user);
+                threadContext.putTransient(ConfigConstants.SECURITY_USER, user);
                 enforcePrivilegesEvaluation = true;
             }
 
             final boolean userIsAdmin = isUserAdmin(user, adminDns);
             final boolean interClusterRequest = HeaderHelper.isInterClusterRequest(threadContext);
             final boolean trustedClusterRequest = HeaderHelper.isTrustedClusterRequest(threadContext);
-            final boolean confRequest = "true".equals(HeaderHelper.getSafeFromHeader(threadContext, ConfigConstants.OPENDISTRO_SECURITY_CONF_REQUEST_HEADER));
+            final boolean confRequest = "true".equals(HeaderHelper.getSafeFromHeader(threadContext, ConfigConstants.SECURITY_CONF_REQUEST_HEADER));
             final boolean passThroughRequest = action.startsWith("indices:admin/seq_no")
                     || action.equals(WhoAmIAction.NAME);
 
@@ -210,11 +210,11 @@ public class OpenDistroSecurityFilter implements ActionFilter {
                 }
 
                 traceAction("Node "+cs.localNode().getName()+" -> "+action+" ("+count+"): userIsAdmin="+userIsAdmin+"/conRequest="+confRequest+"/internalRequest="+internalRequest
-                        +"origin="+threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress());
+                        +"origin="+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress());
 
 
                 threadContext.putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" FILTER -> "+"Node "+cs.localNode().getName()+" -> "+action+" userIsAdmin="+userIsAdmin+"/conRequest="+confRequest+"/internalRequest="+internalRequest
-                        +"origin="+threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress()+" "+threadContext.getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("_opendistro_security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
+                        +"origin="+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress()+" "+threadContext.getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("_opendistro_security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
 
 
             }
@@ -256,7 +256,7 @@ public class OpenDistroSecurityFilter implements ActionFilter {
 
             }
 
-            if(AuditLog.Origin.LOCAL.toString().equals(threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN))
+            if(AuditLog.Origin.LOCAL.toString().equals(threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN))
                     && (interClusterRequest || HeaderHelper.isDirectRequest(threadContext))
                     && (injectedRoles == null)
                     && !enforcePrivilegesEvaluation
@@ -278,7 +278,7 @@ public class OpenDistroSecurityFilter implements ActionFilter {
                     return;
                 }
 
-                log.error("No user found for "+ action+" from "+request.remoteAddress()+" "+threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN)+" via "+threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_CHANNEL_TYPE)+" "+threadContext.getHeaders());
+                log.error("No user found for "+ action+" from "+request.remoteAddress()+" "+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+" via "+threadContext.getTransient(ConfigConstants.SECURITY_CHANNEL_TYPE)+" "+threadContext.getHeaders());
                 listener.onFailure(new OpenSearchSecurityException("No user found for "+action, RestStatus.INTERNAL_SERVER_ERROR));
                 return;
             }
