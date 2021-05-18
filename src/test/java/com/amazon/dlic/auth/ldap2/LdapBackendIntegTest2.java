@@ -15,7 +15,7 @@
 
 package com.amazon.dlic.auth.ldap2;
 
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import org.opensearch.security.support.ConfigConstants;
 import org.apache.http.HttpStatus;
 import org.apache.http.message.BasicHeader;
 import org.opensearch.common.settings.Settings;
@@ -25,11 +25,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazon.dlic.auth.ldap.srv.EmbeddedLDAPServer;
-import com.amazon.opendistroforelasticsearch.security.test.DynamicSecurityConfig;
-import com.amazon.opendistroforelasticsearch.security.test.SingleClusterTest;
-import com.amazon.opendistroforelasticsearch.security.test.helper.file.FileHelper;
-import com.amazon.opendistroforelasticsearch.security.test.helper.rest.RestHelper;
-import com.amazon.opendistroforelasticsearch.security.test.helper.rest.RestHelper.HttpResponse;
+import org.opensearch.security.test.DynamicSecurityConfig;
+import org.opensearch.security.test.SingleClusterTest;
+import org.opensearch.security.test.helper.file.FileHelper;
+import org.opensearch.security.test.helper.rest.RestHelper;
+import org.opensearch.security.test.helper.rest.RestHelper.HttpResponse;
 
 public class LdapBackendIntegTest2 extends SingleClusterTest {
 
@@ -77,7 +77,7 @@ public class LdapBackendIntegTest2 extends SingleClusterTest {
         String securityConfigAsYamlString = FileHelper.loadFile("ldap/config_ldap2.yml");
         securityConfigAsYamlString = securityConfigAsYamlString.replace("${ldapsPort}", String.valueOf(ldapsPort));
         final Settings settings = Settings.builder()
-                .putList(ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_REST_IMPERSONATION_USERS+".cn=Captain Spock,ou=people,o=TEST", "*")
+                .putList(ConfigConstants.SECURITY_AUTHCZ_REST_IMPERSONATION_USERS+".cn=Captain Spock,ou=people,o=TEST", "*")
                 .build();
         setup(Settings.EMPTY, new DynamicSecurityConfig().setConfigAsYamlString(securityConfigAsYamlString), settings);
         final RestHelper rh = nonSslRestHelper();
