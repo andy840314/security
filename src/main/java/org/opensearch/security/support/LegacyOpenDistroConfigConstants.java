@@ -1,31 +1,27 @@
 /*
- * Copyright 2015-2018 _floragunn_ GmbH
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * SPDX-License-Identifier: Apache-2.0
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
  */
 
 /*
- * Portions Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
+ *   Licensed under the Apache License, Version 2.0 (the "License").
+ *   You may not use this file except in compliance with the License.
+ *   A copy of the License is located at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ *   or in the "license" file accompanying this file. This file is distributed
+ *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ *   express or implied. See the License for the specific language governing
+ *   permissions and limitations under the License.
  */
 
 package org.opensearch.security.support;
@@ -150,26 +146,26 @@ public class LegacyOpenDistroConfigConstants {
     public static final String OPENDISTRO_SECURITY_AUDIT_CONFIG_DEFAULT_PREFIX = "opendistro_security.audit.config.";
 
     // Internal / External OpenSearch
-    public static final String OPENDISTRO_SECURITY_AUDIT_OPENDISTRO_INDEX = "index";
-    public static final String OPENDISTRO_SECURITY_AUDIT_OPENDISTRO_TYPE = "type";
+    public static final String OPENDISTRO_SECURITY_AUDIT_OPENSEARCH_INDEX = "index";
+    public static final String OPENDISTRO_SECURITY_AUDIT_OPENSEARCH_TYPE = "type";
     
     // External OpenSearch
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_HTTP_ENDPOINTS = "http_endpoints";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_USERNAME = "username";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PASSWORD = "password";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_ENABLE_SSL = "enable_ssl";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_VERIFY_HOSTNAMES = "verify_hostnames";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_ENABLE_SSL_CLIENT_AUTH = "enable_ssl_client_auth";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMKEY_FILEPATH = "pemkey_filepath";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMKEY_CONTENT = "pemkey_content";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMKEY_PASSWORD = "pemkey_password";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMCERT_FILEPATH = "pemcert_filepath";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMCERT_CONTENT = "pemcert_content";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMTRUSTEDCAS_FILEPATH = "pemtrustedcas_filepath";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_PEMTRUSTEDCAS_CONTENT = "pemtrustedcas_content";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_JKS_CERT_ALIAS = "cert_alias";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_ENABLED_SSL_CIPHERS = "enabled_ssl_ciphers";
-    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENDISTRO_ENABLED_SSL_PROTOCOLS = "enabled_ssl_protocols";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_HTTP_ENDPOINTS = "http_endpoints";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_USERNAME = "username";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PASSWORD = "password";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_ENABLE_SSL = "enable_ssl";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_VERIFY_HOSTNAMES = "verify_hostnames";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_ENABLE_SSL_CLIENT_AUTH = "enable_ssl_client_auth";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMKEY_FILEPATH = "pemkey_filepath";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMKEY_CONTENT = "pemkey_content";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMKEY_PASSWORD = "pemkey_password";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMCERT_FILEPATH = "pemcert_filepath";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMCERT_CONTENT = "pemcert_content";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMTRUSTEDCAS_FILEPATH = "pemtrustedcas_filepath";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_PEMTRUSTEDCAS_CONTENT = "pemtrustedcas_content";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_JKS_CERT_ALIAS = "cert_alias";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_ENABLED_SSL_CIPHERS = "enabled_ssl_ciphers";
+    public static final String OPENDISTRO_SECURITY_AUDIT_EXTERNAL_OPENSEARCH_ENABLED_SSL_PROTOCOLS = "enabled_ssl_protocols";
 
     // Webhooks    
     public static final String OPENDISTRO_SECURITY_AUDIT_WEBHOOK_URL = "webhook.url";
