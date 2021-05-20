@@ -1259,7 +1259,7 @@ class DlsFlsFilterLeafReader extends SequentialStoredFieldsLeafReader  {
     }
 
     private boolean isSuggest() {
-        return threadContext.getTransient("_opendistro_security_issuggest") == Boolean.TRUE;
+        return threadContext.getTransient("security_issuggest") == Boolean.TRUE;
     }
 
     private boolean applyDlsHere() {

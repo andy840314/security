@@ -45,7 +45,7 @@ public class GetConfigurationApiTest extends AbstractRestApiUnitTest {
 		Assert.assertEquals(
 				settings.getAsBoolean("config.dynamic.authc.authentication_domain_basic_internal.http_enabled", false),
 				true);
-		Assert.assertNull(settings.get("_opendistro_security_meta.type"));
+		Assert.assertNull(settings.get("security_meta.type"));
 
 		// internalusers
 		response = rh.executeGetRequest("_opendistro/_security/api/internalusers");
@@ -53,21 +53,21 @@ public class GetConfigurationApiTest extends AbstractRestApiUnitTest {
 		settings = Settings.builder().loadFromSource(response.getBody(), XContentType.JSON).build();
 		Assert.assertEquals("", settings.get("admin.hash"));
 		Assert.assertEquals("", settings.get("other.hash"));
-		Assert.assertNull(settings.get("_opendistro_security_meta.type"));
+		Assert.assertNull(settings.get("security_meta.type"));
 
 		// roles
 		response = rh.executeGetRequest("_opendistro/_security/api/roles");
 		Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 		JsonNode jnode = DefaultObjectMapper.readTree(response.getBody());
 		Assert.assertEquals(jnode.get("opendistro_security_all_access").get("cluster_permissions").get(0).asText(), "cluster:*");
-		Assert.assertNull(settings.get("_opendistro_security_meta.type"));
+		Assert.assertNull(settings.get("security_meta.type"));
 
 		// roles
 		response = rh.executeGetRequest("_opendistro/_security/api/rolesmapping");
 		Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 		settings = Settings.builder().loadFromSource(response.getBody(), XContentType.JSON).build();
 		Assert.assertEquals(settings.getAsList("opendistro_security_role_starfleet.backend_roles").get(0), "starfleet");
-		Assert.assertNull(settings.get("_opendistro_security_meta.type"));
+		Assert.assertNull(settings.get("security_meta.type"));
 
 		// action groups
 		response = rh.executeGetRequest("_opendistro/_security/api/actiongroups");
@@ -75,7 +75,7 @@ public class GetConfigurationApiTest extends AbstractRestApiUnitTest {
 		settings = Settings.builder().loadFromSource(response.getBody(), XContentType.JSON).build();
 		Assert.assertEquals(settings.getAsList("ALL.allowed_actions").get(0), "indices:*");
 		Assert.assertTrue(settings.hasValue("INTERNAL.allowed_actions"));
-		Assert.assertNull(settings.get("_opendistro_security_meta.type"));
+		Assert.assertNull(settings.get("security_meta.type"));
 	}
 
 }

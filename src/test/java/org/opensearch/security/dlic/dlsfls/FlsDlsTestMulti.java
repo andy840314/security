@@ -165,8 +165,8 @@ public class FlsDlsTestMulti extends AbstractDlsFlsTest{
 
         Assert.assertEquals(HttpStatus.SC_OK, (res = rh.executePostRequest("_msearch?pretty", msearchBody, encodeBasicHeader("dept_manager_multi", "password"))).getStatusCode());
         Assert.assertTrue(res.getBody(), res.getBody().contains("\"value\" : 3,\n          \"relation"));
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_dls_query"));
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_fls_fields"));
+        Assert.assertFalse(res.getBody().contains("security_dls_query"));
+        Assert.assertFalse(res.getBody().contains("security_fls_fields"));
         Assert.assertTrue(res.getBody().contains("\"amount\" : 1500"));
         Assert.assertFalse(res.getBody().contains("\"amount\" : 20001"));
         Assert.assertTrue(res.getBody().contains("\"amount\" : 200"));
@@ -200,8 +200,8 @@ public class FlsDlsTestMulti extends AbstractDlsFlsTest{
             "}";
 
         Assert.assertEquals(HttpStatus.SC_OK, (res = rh.executePostRequest("_mget?pretty", mgetBody, encodeBasicHeader("dept_manager_multi", "password"))).getStatusCode());
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_dls_query"));
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_fls_fields"));
+        Assert.assertFalse(res.getBody().contains("security_dls_query"));
+        Assert.assertFalse(res.getBody().contains("security_fls_fields"));
         Assert.assertTrue(res.getBody().contains("\"amount\" : 1500"));
         Assert.assertFalse(res.getBody().contains("\"amount\" : 20001"));
         Assert.assertTrue(res.getBody().contains("\"amount\" : 200"));

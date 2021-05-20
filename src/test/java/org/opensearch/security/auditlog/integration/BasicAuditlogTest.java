@@ -410,11 +410,11 @@ public class BasicAuditlogTest extends AbstractAuditlogiUnitTest {
 
     public void testBadHeader() throws Exception {
 
-        HttpResponse response = rh.executeGetRequest("", new BasicHeader("_opendistro_security_bad", "bad"), encodeBasicHeader("admin", "admin"));
+        HttpResponse response = rh.executeGetRequest("", new BasicHeader("security_bad", "bad"), encodeBasicHeader("admin", "admin"));
         Assert.assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusCode());
         Assert.assertFalse(TestAuditlogImpl.sb.toString(), TestAuditlogImpl.sb.toString().contains("AUTHENTICATED"));
         Assert.assertTrue(TestAuditlogImpl.sb.toString(), TestAuditlogImpl.sb.toString().contains("BAD_HEADERS"));
-        Assert.assertTrue(TestAuditlogImpl.sb.toString(), TestAuditlogImpl.sb.toString().contains("_opendistro_security_bad"));
+        Assert.assertTrue(TestAuditlogImpl.sb.toString(), TestAuditlogImpl.sb.toString().contains("security_bad"));
         Assert.assertEquals(TestAuditlogImpl.sb.toString(), 1, TestAuditlogImpl.messages.size());
         Assert.assertTrue(validateMsgs(TestAuditlogImpl.messages));
     }
@@ -698,7 +698,7 @@ public class BasicAuditlogTest extends AbstractAuditlogiUnitTest {
         setup(additionalSettings);
 
         TestAuditlogImpl.clear();
-        HttpResponse response = rh.executeGetRequest("_search?pretty", new BasicHeader("_opendistro_security_user", "xxx"), encodeBasicHeader("admin", "admin"));
+        HttpResponse response = rh.executeGetRequest("_search?pretty", new BasicHeader("security_user", "xxx"), encodeBasicHeader("admin", "admin"));
         Assert.assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusCode());
         System.out.println(TestAuditlogImpl.sb.toString());
         Assert.assertFalse(TestAuditlogImpl.sb.toString().contains("YWRtaW46YWRtaW4"));
@@ -879,7 +879,7 @@ public class BasicAuditlogTest extends AbstractAuditlogiUnitTest {
 
         // test BAD_HEADERS
         TestAuditlogImpl.clear();
-        rh.executeGetRequest("test", new BasicHeader("_opendistro_security_user", "xxx"));
+        rh.executeGetRequest("test", new BasicHeader("security_user", "xxx"));
         Assert.assertEquals(1, TestAuditlogImpl.messages.size());
         Assert.assertTrue(TestAuditlogImpl.sb.toString().contains("BAD_HEADERS"));
         Assert.assertTrue(TestAuditlogImpl.sb.toString().contains("\"audit_rest_request_method\" : \"GET\""));

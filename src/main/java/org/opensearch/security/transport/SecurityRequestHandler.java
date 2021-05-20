@@ -135,7 +135,7 @@ public class SecurityRequestHandler<T extends TransportRequest> extends Security
             if(request instanceof ShardSearchRequest) {
                 ShardSearchRequest sr = ((ShardSearchRequest) request);
                 if(sr.source() != null && sr.source().suggest() != null) {
-                    getThreadContext().putTransient("_opendistro_security_issuggest", Boolean.TRUE);
+                    getThreadContext().putTransient("security_issuggest", Boolean.TRUE);
                 }
             }
 
@@ -159,7 +159,7 @@ public class SecurityRequestHandler<T extends TransportRequest> extends Security
                 }
 
                 if (isActionTraceEnabled()) {
-                    getThreadContext().putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" DIR -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders());
+                    getThreadContext().putHeader("security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" DIR -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders());
                 }
 
                 putInitialActionClassHeader(initialActionClassValue, resolvedActionClass);
@@ -280,7 +280,7 @@ public class SecurityRequestHandler<T extends TransportRequest> extends Security
                 }
 
                 if (isActionTraceEnabled()) {
-                    getThreadContext().putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" NETTI -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("_opendistro_security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
+                    getThreadContext().putHeader("security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" NETTI -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
                 }
 
 
@@ -291,7 +291,7 @@ public class SecurityRequestHandler<T extends TransportRequest> extends Security
         } finally {
 
             if (isActionTraceEnabled()) {
-                getThreadContext().putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" FIN -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders());
+                getThreadContext().putHeader("security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" FIN -> "+transportChannel.getChannelType()+" "+getThreadContext().getHeaders());
             }
 
             if(sgContext != null) {
@@ -320,7 +320,7 @@ public class SecurityRequestHandler<T extends TransportRequest> extends Security
         boolean isInterClusterRequest = requestEvalProvider.isInterClusterRequest(request, localCerts, peerCerts, principal);
         final boolean isTraceEnabled = log.isTraceEnabled();
         if (isInterClusterRequest) {
-            if(cs.getClusterName().value().equals(getThreadContext().getHeader("_opendistro_security_remotecn"))) {
+            if(cs.getClusterName().value().equals(getThreadContext().getHeader("security_remotecn"))) {
 
                 if (isTraceEnabled && !action.startsWith("internal:")) {
                     log.trace("Is inter cluster request ({}/{}/{})", action, request.getClass(), request.remoteAddress());

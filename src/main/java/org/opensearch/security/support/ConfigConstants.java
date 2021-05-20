@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
 public class ConfigConstants {
 
 
-    public static final String SECURITY_CONFIG_PREFIX = "_opendistro_security_";
+    public static final String SECURITY_CONFIG_PREFIX = "security_";
 
     public static final String SECURITY_CHANNEL_TYPE = SECURITY_CONFIG_PREFIX+"channel_type";
 
@@ -84,7 +84,7 @@ public class ConfigConstants {
 
     /**
      * If this is set to TRUE then the request comes from a Server Node (fully trust)
-     * Its expected that there is a _opendistro_security_user attached as header
+     * Its expected that there is a security_user attached as header
      */
     public static final String SECURITY_SSL_TRANSPORT_INTERCLUSTER_REQUEST = SECURITY_CONFIG_PREFIX+"ssl_transport_intercluster_request";
 

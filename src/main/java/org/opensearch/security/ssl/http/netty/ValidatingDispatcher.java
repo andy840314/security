@@ -71,7 +71,7 @@ public class ValidatingDispatcher implements Dispatcher {
     
     protected void checkRequest(final RestRequest request, final RestChannel channel) {
         
-        if(SSLRequestHelper.containsBadHeader(threadContext, "_opendistro_security_ssl_")) {
+        if(SSLRequestHelper.containsBadHeader(threadContext, "security_ssl_")) {
             final OpenSearchException exception = ExceptionUtils.createBadHeaderException();
             errorHandler.logError(exception, request, 1);
             throw exception;

@@ -77,7 +77,7 @@ implements TransportRequestHandler<T> {
     public final void messageReceived(T request, TransportChannel channel, Task task) throws Exception {
         ThreadContext threadContext = getThreadContext() ;
       
-        if(SSLRequestHelper.containsBadHeader(threadContext, "_opendistro_security_ssl_")) {
+        if(SSLRequestHelper.containsBadHeader(threadContext, "security_ssl_")) {
             final Exception exception = ExceptionUtils.createBadHeaderException();
             channel.sendResponse(exception);
             throw exception;
@@ -133,11 +133,11 @@ implements TransportRequestHandler<T> {
                 addAdditionalContextValues(action, request, x509LocalCerts, x509PeerCerts, principal);
                 if(threadContext != null) {
                     //in the case of ssl plugin only: threadContext and principalExtractor are null
-                    threadContext.putTransient("_opendistro_security_ssl_transport_principal", principal);
-                    threadContext.putTransient("_opendistro_security_ssl_transport_peer_certificates", x509PeerCerts);
-                    threadContext.putTransient("_opendistro_security_ssl_transport_local_certificates", x509LocalCerts);
-                    threadContext.putTransient("_opendistro_security_ssl_transport_protocol", sslhandler.engine().getSession().getProtocol());
-                    threadContext.putTransient("_opendistro_security_ssl_transport_cipher", sslhandler.engine().getSession().getCipherSuite());
+                    threadContext.putTransient("security_ssl_transport_principal", principal);
+                    threadContext.putTransient("security_ssl_transport_peer_certificates", x509PeerCerts);
+                    threadContext.putTransient("security_ssl_transport_local_certificates", x509LocalCerts);
+                    threadContext.putTransient("security_ssl_transport_protocol", sslhandler.engine().getSession().getProtocol());
+                    threadContext.putTransient("security_ssl_transport_cipher", sslhandler.engine().getSession().getCipherSuite());
                 }
                 messageReceivedDecorate(request, actualHandler, channel, task);
             } else {

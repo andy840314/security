@@ -127,7 +127,7 @@ public class SecurityInterceptor {
         final boolean isDebugEnabled = log.isDebugEnabled();
         try (ThreadContext.StoredContext stashedContext = getThreadContext().stashContext()) {
             final TransportResponseHandler<T> restoringHandler = new RestoringTransportResponseHandler<T>(handler, stashedContext);
-            getThreadContext().putHeader("_opendistro_security_remotecn", cs.getClusterName().value());
+            getThreadContext().putHeader("security_remotecn", cs.getClusterName().value());
 
             final Map<String, String> headerMap = new HashMap<>(Maps.filterKeys(origHeaders0, k->k!=null && (
                     k.equals(ConfigConstants.SECURITY_CONF_REQUEST_HEADER)
@@ -137,8 +137,8 @@ public class SecurityInterceptor {
                             || k.equals(ConfigConstants.SECURITY_DLS_QUERY_HEADER)
                             || k.equals(ConfigConstants.SECURITY_FLS_FIELDS_HEADER)
                             || k.equals(ConfigConstants.SECURITY_MASKED_FIELD_HEADER)
-                            || (k.equals("_opendistro_security_source_field_context") && ! (request instanceof SearchRequest) && !(request instanceof GetRequest))
-                            || k.startsWith("_opendistro_security_trace")
+                            || (k.equals("security_source_field_context") && ! (request instanceof SearchRequest) && !(request instanceof GetRequest))
+                            || k.startsWith("security_trace")
                             || k.startsWith(ConfigConstants.SECURITY_INITIAL_ACTION_CLASS_HEADER)
             )));
 
@@ -182,7 +182,7 @@ public class SecurityInterceptor {
             ensureCorrectHeaders(remoteAddress0, user0, origin0, injectedUserString);
 
             if (isActionTraceEnabled()) {
-                getThreadContext().putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" IC -> "+action+" "+getThreadContext().getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("_opendistro_security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
+                getThreadContext().putHeader("security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" IC -> "+action+" "+getThreadContext().getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
             }
 
             sender.sendRequest(connection, action, request, options, restoringHandler);

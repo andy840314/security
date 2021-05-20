@@ -71,17 +71,17 @@ public final class FieldReadCallback {
         this.maskedFieldsMatcher = maskedFieldsMatcher;
         this.shardId = shardId;
         try {
-            sfc = (SourceFieldsContext) HeaderHelper.deserializeSafeFromHeader(threadContext, "_opendistro_security_source_field_context");
+            sfc = (SourceFieldsContext) HeaderHelper.deserializeSafeFromHeader(threadContext, "security_source_field_context");
             if(sfc != null && sfc.hasIncludesOrExcludes()) {
                 if (log.isTraceEnabled()) {
-                    log.trace("_opendistro_security_source_field_context: {}", sfc);
+                    log.trace("security_source_field_context: {}", sfc);
                 }
 
                 filterFunction = XContentMapValues.filter(sfc.getIncludes(), sfc.getExcludes());
             }
         } catch (Exception e) {
             if(log.isDebugEnabled()) {
-                log.debug("Cannot deserialize _opendistro_security_source_field_context because of {}", e.toString());
+                log.debug("Cannot deserialize security_source_field_context because of {}", e.toString());
             }
         }
     }

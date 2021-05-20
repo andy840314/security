@@ -214,8 +214,8 @@ public class SecurityFilter implements ActionFilter {
                         +"origin="+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress());
 
 
-                threadContext.putHeader("_opendistro_security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" FILTER -> "+"Node "+cs.localNode().getName()+" -> "+action+" userIsAdmin="+userIsAdmin+"/conRequest="+confRequest+"/internalRequest="+internalRequest
-                        +"origin="+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress()+" "+threadContext.getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("_opendistro_security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
+                threadContext.putHeader("security_trace"+System.currentTimeMillis()+"#"+UUID.randomUUID().toString(), Thread.currentThread().getName()+" FILTER -> "+"Node "+cs.localNode().getName()+" -> "+action+" userIsAdmin="+userIsAdmin+"/conRequest="+confRequest+"/internalRequest="+internalRequest
+                        +"origin="+threadContext.getTransient(ConfigConstants.SECURITY_ORIGIN)+"/directRequest="+HeaderHelper.isDirectRequest(threadContext)+"/remoteAddress="+request.remoteAddress()+" "+threadContext.getHeaders().entrySet().stream().filter(p->!p.getKey().startsWith("security_trace")).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())));
 
 
             }
@@ -378,14 +378,14 @@ public class SecurityFilter implements ActionFilter {
     private void attachSourceFieldContext(ActionRequest request) {
         
         if(request instanceof SearchRequest && SourceFieldsContext.isNeeded((SearchRequest) request)) {
-            if(threadContext.getHeader("_opendistro_security_source_field_context") == null) {
+            if(threadContext.getHeader("security_source_field_context") == null) {
                 final String serializedSourceFieldContext = Base64Helper.serializeObject(new SourceFieldsContext((SearchRequest) request));
-                threadContext.putHeader("_opendistro_security_source_field_context", serializedSourceFieldContext);
+                threadContext.putHeader("security_source_field_context", serializedSourceFieldContext);
             }
         } else if (request instanceof GetRequest && SourceFieldsContext.isNeeded((GetRequest) request)) {
-            if(threadContext.getHeader("_opendistro_security_source_field_context") == null) {
+            if(threadContext.getHeader("security_source_field_context") == null) {
                 final String serializedSourceFieldContext = Base64Helper.serializeObject(new SourceFieldsContext((GetRequest) request));
-                threadContext.putHeader("_opendistro_security_source_field_context", serializedSourceFieldContext);
+                threadContext.putHeader("security_source_field_context", serializedSourceFieldContext);
             }
         }
     }

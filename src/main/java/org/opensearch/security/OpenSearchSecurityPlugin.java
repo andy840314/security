@@ -542,9 +542,9 @@ public final class OpenSearchSecurityPlugin extends OpenSearchSecuritySSLPlugin 
                             && (interClusterRequest || HeaderHelper.isDirectRequest(threadPool.getThreadContext()))
 
                     ) {
-                        readerContext.putInContext("_opendistro_security_scroll_auth_local", Boolean.TRUE);
+                        readerContext.putInContext("security_scroll_auth_local", Boolean.TRUE);
                     } else {
-                        readerContext.putInContext("_opendistro_security_scroll_auth", threadPool.getThreadContext()
+                        readerContext.putInContext("security_scroll_auth", threadPool.getThreadContext()
                                 .getTransient(ConfigConstants.SECURITY_USER));
                     }
                 }
@@ -556,9 +556,9 @@ public final class OpenSearchSecurityPlugin extends OpenSearchSecuritySSLPlugin 
                             && (interClusterRequest || HeaderHelper.isDirectRequest(threadPool.getThreadContext()))
 
                     ) {
-                        readerContext.putInContext("_opendistro_security_scroll_auth_local", Boolean.TRUE);
+                        readerContext.putInContext("security_scroll_auth_local", Boolean.TRUE);
                     } else {
-                        readerContext.putInContext("_opendistro_security_scroll_auth", threadPool.getThreadContext()
+                        readerContext.putInContext("security_scroll_auth", threadPool.getThreadContext()
                                 .getTransient(ConfigConstants.SECURITY_USER));
                     }
                 }
@@ -566,8 +566,8 @@ public final class OpenSearchSecurityPlugin extends OpenSearchSecuritySSLPlugin 
                 @Override
                 public void validateReaderContext(ReaderContext readerContext, TransportRequest transportRequest) {
                     if (transportRequest instanceof InternalScrollSearchRequest) {
-                        final Object _isLocal = readerContext.getFromContext("_opendistro_security_scroll_auth_local");
-                        final Object _user = readerContext.getFromContext("_opendistro_security_scroll_auth");
+                        final Object _isLocal = readerContext.getFromContext("security_scroll_auth_local");
+                        final Object _user = readerContext.getFromContext("security_scroll_auth");
                         if (_user != null && (_user instanceof User)) {
                             final User scrollUser = (User) _user;
                             final User currentUser = threadPool.getThreadContext()
