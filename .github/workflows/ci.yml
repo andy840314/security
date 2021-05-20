@@ -45,7 +45,7 @@ jobs:
 
     - name: Build OpenSearch
       working-directory: ./OpenSearch
-      run: ./gradlew publishToMavenLocal -Dbuild.version_qualifier=beta1 -Dbuild.snapshot=false -Dtest=EncryptionInTransitMigrationTests#testSslOnlyModeDualModeEnabled
+      run: ./gradlew publishToMavenLocal -Dbuild.version_qualifier=beta1 -Dbuild.snapshot=false
 
     - name: Checkstyle
       run: mvn -B checkstyle:checkstyle
@@ -57,7 +57,7 @@ jobs:
       uses: github/codeql-action/analyze@v1
 
     - name: Test
-      run: SECURITY_TEST_OPENSSL_OPT=true mvn -B test
+      run: SECURITY_TEST_OPENSSL_OPT=true mvn -B test -Dtest=EncryptionInTransitMigrationTests#testSslOnlyModeDualModeEnabled
 
     - name: Coverage
       uses: codecov/codecov-action@v1
