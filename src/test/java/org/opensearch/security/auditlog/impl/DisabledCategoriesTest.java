@@ -68,8 +68,8 @@ public class DisabledCategoriesTest {
 		thrown.expect(IllegalArgumentException.class);
 
 		Builder settingsBuilder = Settings.builder();
-		settingsBuilder.put("opendistro_security.audit.type", TestAuditlogImpl.class.getName());
-        settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, "nonexistent");
+		settingsBuilder.put("plugins.security.audit.type", TestAuditlogImpl.class.getName());
+        settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, "nonexistent");
 
 		AuditTestUtils.createAuditLog(settingsBuilder.build(), null, null, AbstractSecurityUnitTest.MOCK_POOL, null, cs);
 	}
@@ -79,16 +79,16 @@ public class DisabledCategoriesTest {
 		thrown.expect(IllegalArgumentException.class);
 
 		Builder settingsBuilder = Settings.builder();
-		settingsBuilder.put("opendistro_security.audit.type", TestAuditlogImpl.class.getName());
-		settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, "nonexistent");
+		settingsBuilder.put("plugins.security.audit.type", TestAuditlogImpl.class.getName());
+		settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, "nonexistent");
 		AuditTestUtils.createAuditLog(settingsBuilder.build(), null, null, AbstractSecurityUnitTest.MOCK_POOL, null, cs);
 	}
 
 	@Test
 	public void invalidConfigurationTest() {
 		Builder settingsBuilder  = Settings.builder();
-		settingsBuilder.put("opendistro_security.audit.type", "debug");
-		settingsBuilder.put("opendistro_security.audit.config.disabled_categories", "nonexistant, bad_headers");
+		settingsBuilder.put("plugins.security.audit.type", "debug");
+		settingsBuilder.put("plugins.security.audit.config.disabled_categories", "nonexistant, bad_headers");
 		AbstractAuditLog auditLog = AuditTestUtils.createAuditLog(settingsBuilder.build(), null, null, AbstractSecurityUnitTest.MOCK_POOL, null, cs);
 		logAll(auditLog);
 		String result = TestAuditlogImpl.sb.toString();
@@ -99,9 +99,9 @@ public class DisabledCategoriesTest {
 	public void enableAllCategoryTest() throws Exception {
 		final Builder settingsBuilder  = Settings.builder();
 
-		settingsBuilder.put("opendistro_security.audit.type", TestAuditlogImpl.class.getName());
-		settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, "NONE");
-        settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, "NONE");
+		settingsBuilder.put("plugins.security.audit.type", TestAuditlogImpl.class.getName());
+		settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, "NONE");
+        settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, "NONE");
 
 		// we use the debug output, no OpenSearch client is needed. Also, we
 		// do not need to close.
@@ -159,9 +159,9 @@ public class DisabledCategoriesTest {
 		String disabledCategoriesString = Joiner.on(",").join(categoryNames);
 
 		Builder settingsBuilder  = Settings.builder();
-		settingsBuilder.put("opendistro_security.audit.type", TestAuditlogImpl.class.getName());
-		settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, disabledCategoriesString);
-        settingsBuilder.put(ConfigConstants.OPENDISTRO_SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, disabledCategoriesString);
+		settingsBuilder.put("plugins.security.audit.type", TestAuditlogImpl.class.getName());
+		settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_TRANSPORT_CATEGORIES, disabledCategoriesString);
+        settingsBuilder.put(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, disabledCategoriesString);
 
 
 		// we use the debug output, no OpenSearch client is needed. Also, we

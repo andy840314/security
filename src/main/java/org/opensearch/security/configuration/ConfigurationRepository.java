@@ -99,14 +99,14 @@ public class ConfigurationRepository {
 
     private ConfigurationRepository(Settings settings, final Path configPath, ThreadPool threadPool,
                                     Client client, ClusterService clusterService, AuditLog auditLog) {
-        this.securityIndex = settings.get(ConfigConstants.OPENDISTRO_SECURITY_CONFIG_INDEX_NAME, ConfigConstants.OPENDISTRO_SECURITY_DEFAULT_CONFIG_INDEX);
+        this.securityIndex = settings.get(ConfigConstants.SECURITY_CONFIG_INDEX_NAME, ConfigConstants.SECURITY_DEFAULT_CONFIG_INDEX);
         this.settings = settings;
         this.client = client;
         this.threadPool = threadPool;
         this.clusterService = clusterService;
         this.auditLog = auditLog;
         this.configurationChangedListener = new ArrayList<>();
-        this.acceptInvalid = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, false);
+        this.acceptInvalid = settings.getAsBoolean(ConfigConstants.SECURITY_UNSUPPORTED_ACCEPT_INVALID_CONFIG, false);
         cl = new ConfigurationLoaderSecurity7(client, threadPool, settings, clusterService);
 
         configCache = CacheBuilder
@@ -129,9 +129,11 @@ public class ConfigurationRepository {
                             if(confFile.exists()) {
                                 final ThreadContext threadContext = threadPool.getThreadContext();
                                 try(StoredContext ctx = threadContext.stashContext()) {
-                                    threadContext.putHeader(ConfigConstants.OPENDISTRO_SECURITY_CONF_REQUEST_HEADER, "true");
+                                    threadContext.putHeader(ConfigConstants.SECURITY_CONF_REQUEST_HEADER, "true");
 
                                     final boolean isSecurityIndexCreated = createSecurityIndexIfAbsent();
+                                    waitForSecurityIndexToBeAtLeastYellow();
+
                                     if (isSecurityIndexCreated) {
                                         ConfigHelper.uploadFile(client, cd+"config.yml", securityIndex, CType.CONFIG, DEFAULT_CONFIG_VERSION);
                                         ConfigHelper.uploadFile(client, cd+"roles.yml", securityIndex, CType.ROLES, DEFAULT_CONFIG_VERSION);
@@ -157,34 +159,8 @@ public class ConfigurationRepository {
                                 LOGGER.error("{} does not exist", confFile.getAbsolutePath());
                             }
                         } catch (Exception e) {
-                            LOGGER.debug("Cannot apply default config (this is maybe not an error!) due to {}", e.getMessage());
+                            LOGGER.error("Cannot apply default config (this is maybe not an error!)", e);
                         }
-                    }
-
-                    LOGGER.debug("Node started, try to initialize it. Wait for at least yellow cluster state....");
-                    ClusterHealthResponse response = null;
-                    try {
-                        response = client.admin().cluster().health(new ClusterHealthRequest(securityIndex)
-                                .waitForActiveShards(1)
-                                .waitForYellowStatus()).actionGet();
-                    } catch (Exception e1) {
-                        LOGGER.debug("Catched a {} but we just try again ...", e1.toString());
-                    }
-
-                    while(response == null || response.isTimedOut() || response.getStatus() == ClusterHealthStatus.RED) {
-                        LOGGER.debug("index '{}' not healthy yet, we try again ... (Reason: {})", securityIndex, response==null?"no response":(response.isTimedOut()?"timeout":"other, maybe red cluster"));
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e1) {
-                            //ignore
-                            Thread.currentThread().interrupt();
-                        }
-                        try {
-                            response = client.admin().cluster().health(new ClusterHealthRequest(securityIndex).waitForYellowStatus()).actionGet();
-                        } catch (Exception e1) {
-                            LOGGER.debug("Catched again a {} but we just try again ...", e1.toString());
-                        }
-                        continue;
                     }
 
                     while(!dynamicConfigFactory.isInitialized()) {
@@ -250,13 +226,40 @@ public class ConfigurationRepository {
         }
     }
 
+    private void waitForSecurityIndexToBeAtLeastYellow() {
+        LOGGER.info("Node started, try to initialize it. Wait for at least yellow cluster state....");
+        ClusterHealthResponse response = null;
+        try {
+            response = client.admin().cluster().health(new ClusterHealthRequest(securityIndex)
+                    .waitForActiveShards(1)
+                    .waitForYellowStatus()).actionGet();
+        } catch (Exception e) {
+            LOGGER.debug("Caught a {} but we just try again ...", e.toString());
+        }
+
+        while(response == null || response.isTimedOut() || response.getStatus() == ClusterHealthStatus.RED) {
+            LOGGER.debug("index '{}' not healthy yet, we try again ... (Reason: {})", securityIndex, response==null?"no response":(response.isTimedOut()?"timeout":"other, maybe red cluster"));
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                //ignore
+                Thread.currentThread().interrupt();
+            }
+            try {
+                response = client.admin().cluster().health(new ClusterHealthRequest(securityIndex).waitForYellowStatus()).actionGet();
+            } catch (Exception e) {
+                LOGGER.debug("Caught again a {} but we just try again ...", e.toString());
+            }
+        }
+    }
+
     public void initOnNodeStart() {
         try {
-            if (settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_ALLOW_DEFAULT_INIT_SECURITYINDEX, false)) {
+            if (settings.getAsBoolean(ConfigConstants.SECURITY_ALLOW_DEFAULT_INIT_SECURITYINDEX, false)) {
                 LOGGER.info("Will attempt to create index {} and default configs if they are absent", securityIndex);
                 installDefaultConfig.set(true);
                 bgThread.start();
-            } else if (settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_BACKGROUND_INIT_IF_SECURITYINDEX_NOT_EXIST, true)){
+            } else if (settings.getAsBoolean(ConfigConstants.SECURITY_BACKGROUND_INIT_IF_SECURITYINDEX_NOT_EXIST, true)){
                 LOGGER.info("Will not attempt to create index {} and default configs if they are absent. Use securityadmin to initialize cluster",
                         securityIndex);
                 bgThread.start();
@@ -355,7 +358,7 @@ public class ConfigurationRepository {
         final Map<CType, SecurityDynamicConfiguration<?>> retVal = new HashMap<>();
 
         try(StoredContext ctx = threadContext.stashContext()) {
-            threadContext.putHeader(ConfigConstants.OPENDISTRO_SECURITY_CONF_REQUEST_HEADER, "true");
+            threadContext.putHeader(ConfigConstants.SECURITY_CONF_REQUEST_HEADER, "true");
 
             IndexMetadata securityMetadata = clusterService.state().metadata().index(this.securityIndex);
             MappingMetadata mappingMetadata = securityMetadata==null?null:securityMetadata.mapping();
