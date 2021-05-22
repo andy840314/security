@@ -262,7 +262,7 @@ public class ConfigConstants {
     public static final List<String> SECURITY_PROTECTED_INDICES_ROLES_DEFAULT = Collections.emptyList();
 
     // Roles injection for plugins
-    public static final String SECURITY_INJECTED_ROLES = "opendistro_security_injected_roles";
+    public static final String SECURITY_INJECTED_ROLES = "security_injected_roles";
 
     // System indices settings
     public static final String SECURITY_SYSTEM_INDICES_ENABLED_KEY = "plugins.security.system_indices.enabled";
