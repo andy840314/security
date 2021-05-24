@@ -30,6 +30,7 @@
 
 package org.opensearch.security;
 
+import java.io.File;
 import java.util.Iterator;
 
 import org.apache.http.Header;
@@ -66,10 +67,10 @@ public class InitializationIntegrationTests extends SingleClusterTest {
     public void testEnsureInitViaRestDoesWork() throws Exception {
         
         final Settings settings = Settings.builder()
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
-                .put("opendistro_security.ssl.http.enabled",true)
-                .put("opendistro_security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("node-0-keystore.jks"))
-                .put("opendistro_security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("truststore.jks"))
+                .put(SSLConfigConstants.SECURITY_SSL_HTTP_CLIENTAUTH_MODE, "REQUIRE")
+                .put("plugins.security.ssl.http.enabled",true)
+                .put("plugins.security.ssl.http.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("node-0-keystore.jks"))
+                .put("plugins.security.ssl.http.truststore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("truststore.jks"))
                 .build();
         setup(Settings.EMPTY, null, settings, false);
         final RestHelper rh = restHelper(); //ssl resthelper
@@ -96,7 +97,7 @@ public class InitializationIntegrationTests extends SingleClusterTest {
 
         final Settings settings = Settings.builder()
                 .putList("path.repo", repositoryPath.getRoot().getAbsolutePath())
-                .put("opendistro_security.unsupported.inject_user.enabled", true)
+                .put("plugins.security.unsupported.inject_user.enabled", true)
                 .build();
 
         setup(Settings.EMPTY, new DynamicSecurityConfig().setConfig("config_disable_all.yml"), settings, true);
@@ -188,7 +189,7 @@ public class InitializationIntegrationTests extends SingleClusterTest {
     @Test
     public void testDefaultConfig() throws Exception {
         final Settings settings = Settings.builder()
-                .put(ConfigConstants.OPENDISTRO_SECURITY_ALLOW_DEFAULT_INIT_SECURITYINDEX, true)
+                .put(ConfigConstants.SECURITY_ALLOW_DEFAULT_INIT_SECURITYINDEX, true)
                 .build();
         setup(Settings.EMPTY, null, settings, false);
         RestHelper rh = nonSslRestHelper();
@@ -198,9 +199,36 @@ public class InitializationIntegrationTests extends SingleClusterTest {
     }
 
     @Test
+    public void testInvalidDefaultConfig() throws Exception {
+        String defaultInitDirectory = System.getProperty("security.default_init.dir");
+        try {
+            System.setProperty("security.default_init.dir", new File("./src/test/resources/invalid_config").getAbsolutePath());
+            final Settings settings = Settings.builder()
+                    .put(ConfigConstants.SECURITY_ALLOW_DEFAULT_INIT_SECURITYINDEX, true)
+                    .build();
+            setup(Settings.EMPTY, null, settings, false);
+            RestHelper rh = nonSslRestHelper();
+            Thread.sleep(10000);
+            Assert.assertEquals(HttpStatus.SC_SERVICE_UNAVAILABLE, rh.executeGetRequest("", encodeBasicHeader("admin", "admin")).getStatusCode());
+
+            System.setProperty("security.default_init.dir", defaultInitDirectory);
+            restart(Settings.EMPTY, null, settings, false);
+            rh = nonSslRestHelper();
+            Thread.sleep(10000);
+            Assert.assertEquals(HttpStatus.SC_OK, rh.executeGetRequest("", encodeBasicHeader("admin", "admin")).getStatusCode());
+        } finally {
+            if (defaultInitDirectory != null) {
+                System.setProperty("security.default_init.dir", defaultInitDirectory);
+            } else {
+                System.clearProperty("security.default_init.dir");
+            }
+        }
+    }
+
+    @Test
     public void testDisabled() throws Exception {
     
-        final Settings settings = Settings.builder().put("opendistro_security.disabled", true).build();
+        final Settings settings = Settings.builder().put("plugins.security.disabled", true).build();
         
         setup(Settings.EMPTY, null, settings, false);
         RestHelper rh = nonSslRestHelper();
