@@ -141,10 +141,10 @@ public abstract class AbstractSecurityUnitTest {
 
         Settings tcSettings = Settings.builder()
                 .put("cluster.name", info.clustername)
-                .put("opendistro_security.ssl.transport.truststore_filepath",
+                .put("plugins.security.ssl.transport.truststore_filepath",
                         FileHelper.getAbsoluteFilePathFromClassPath(prefix+"truststore.jks"))
-                .put("opendistro_security.ssl.transport.enforce_hostname_verification", false)
-                .put("opendistro_security.ssl.transport.keystore_filepath",
+                .put("plugins.security.ssl.transport.enforce_hostname_verification", false)
+                .put("plugins.security.ssl.transport.keystore_filepath",
                         FileHelper.getAbsoluteFilePathFromClassPath(prefix+"kirk-keystore.jks"))
                 .put(initTransportClientSettings)
                 .build();
@@ -160,10 +160,10 @@ public abstract class AbstractSecurityUnitTest {
 
         Settings tcSettings = Settings.builder()
                 .put("cluster.name", info.clustername)
-                .put("opendistro_security.ssl.transport.truststore_filepath",
+                .put("plugins.security.ssl.transport.truststore_filepath",
                         FileHelper.getAbsoluteFilePathFromClassPath(prefix+"truststore.jks"))
-                .put("opendistro_security.ssl.transport.enforce_hostname_verification", false)
-                .put("opendistro_security.ssl.transport.keystore_filepath",
+                .put("plugins.security.ssl.transport.enforce_hostname_verification", false)
+                .put("plugins.security.ssl.transport.keystore_filepath",
                         FileHelper.getAbsoluteFilePathFromClassPath(prefix+keyStore))
                 .put(initTransportClientSettings)
                 .build();
@@ -224,21 +224,21 @@ public abstract class AbstractSecurityUnitTest {
         final String prefix = getResourceFolder()==null?"":getResourceFolder()+"/";
 
         Settings.Builder builder = Settings.builder()
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_ENABLE_OPENSSL_IF_AVAILABLE, allowOpenSSL)
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLE_OPENSSL_IF_AVAILABLE, allowOpenSSL);
+                .put(SSLConfigConstants.SECURITY_SSL_HTTP_ENABLE_OPENSSL_IF_AVAILABLE, allowOpenSSL)
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_ENABLE_OPENSSL_IF_AVAILABLE, allowOpenSSL);
 
         // If custom transport settings are not defined use defaults
         if (!hasCustomTransportSettings(other)) {
-            builder.put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS, "node-0")
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_KEYSTORE_FILEPATH,
+            builder.put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS, "node-0")
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_KEYSTORE_FILEPATH,
                     FileHelper.getAbsoluteFilePathFromClassPath(prefix+"node-0-keystore.jks"))
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_TRUSTSTORE_FILEPATH, FileHelper.getAbsoluteFilePathFromClassPath(prefix+"truststore.jks"))
-                .put("opendistro_security.ssl.transport.enforce_hostname_verification", false);
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_TRUSTSTORE_FILEPATH, FileHelper.getAbsoluteFilePathFromClassPath(prefix+"truststore.jks"))
+                .put("plugins.security.ssl.transport.enforce_hostname_verification", false);
         }
 
         if(!sslOnly) {
-            builder.putList("opendistro_security.authcz.admin_dn", "CN=kirk,OU=client,O=client,l=tEst, C=De");
-            builder.put(ConfigConstants.OPENDISTRO_SECURITY_BACKGROUND_INIT_IF_SECURITYINDEX_NOT_EXIST, false);
+            builder.putList("plugins.security.authcz.admin_dn", "CN=kirk,OU=client,O=client,l=tEst, C=De");
+            builder.put(ConfigConstants.SECURITY_BACKGROUND_INIT_IF_SECURITYINDEX_NOT_EXIST, false);
         }
 
         builder.put(other);
@@ -310,7 +310,7 @@ public abstract class AbstractSecurityUnitTest {
      */
     protected boolean hasCustomTransportSettings(Settings customSettings) {
         // If Transport key extended usage is enabled this is true
-        return Boolean.parseBoolean(customSettings.get(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_EXTENDED_KEY_USAGE_ENABLED))  ||
-                customSettings.get(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_PEMCERT_FILEPATH) != null;
+        return Boolean.parseBoolean(customSettings.get(SSLConfigConstants.SECURITY_SSL_TRANSPORT_EXTENDED_KEY_USAGE_ENABLED))  ||
+                customSettings.get(SSLConfigConstants.SECURITY_SSL_TRANSPORT_PEMCERT_FILEPATH) != null;
     }
 }
