@@ -138,7 +138,7 @@ public class OpenSearchSecuritySSLPlugin extends Plugin implements SystemIndexPl
             
             return;
         }
-        this.settings = FallbackSettingsReplacer.replaceSSL(FallbackSettingsReplacer.replace(settings));
+        this.settings = FallbackSettingsReplacer.replace(settings);
         SSLConfig = new SSLConfig(this.settings);
         this.configPath = configPath;
         
