@@ -80,6 +80,7 @@ import org.opensearch.security.ssl.transport.*;
 import org.opensearch.security.ssl.util.LegacyOpenDistroSSLSecuritySettings;
 import org.opensearch.security.ssl.util.SSLConfigConstants;
 import org.opensearch.security.ssl.util.SSLSecuritySettings;
+import org.opensearch.security.support.FallbackSettingsReplacer;
 import org.opensearch.threadpool.ThreadPool;
 import org.opensearch.transport.SharedGroupFactory;
 import org.opensearch.transport.Transport;
@@ -137,7 +138,8 @@ public class OpenSearchSecuritySSLPlugin extends Plugin implements SystemIndexPl
             
             return;
         }
-        SSLConfig = new SSLConfig(settings);
+        this.settings = FallbackSettingsReplacer.replaceSSL(FallbackSettingsReplacer.replace(settings));
+        SSLConfig = new SSLConfig(this.settings);
         this.configPath = configPath;
         
         if(this.configPath != null) {
@@ -146,7 +148,7 @@ public class OpenSearchSecuritySSLPlugin extends Plugin implements SystemIndexPl
             log.info("OpenSearch Config path is not set");
         }
         
-        final boolean allowClientInitiatedRenegotiation = settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_ALLOW_CLIENT_INITIATED_RENEGOTIATION, false);
+        final boolean allowClientInitiatedRenegotiation = this.settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_ALLOW_CLIENT_INITIATED_RENEGOTIATION, false);
         final boolean rejectClientInitiatedRenegotiation = Boolean.parseBoolean(System.getProperty(SSLConfigConstants.JDK_TLS_REJECT_CLIENT_INITIATED_RENEGOTIATION));
    
         if(allowClientInitiatedRenegotiation && !rejectClientInitiatedRenegotiation) {
@@ -192,21 +194,19 @@ public class OpenSearchSecuritySSLPlugin extends Plugin implements SystemIndexPl
                 return null;
             }
         });
-
-        this.settings = settings;
-        this.sharedGroupFactory = new SharedGroupFactory(settings);
+        this.sharedGroupFactory = new SharedGroupFactory(this.settings);
         InjectableValues.Std injectableValues = new InjectableValues.Std();
-        injectableValues.addValue(Settings.class, settings);
+        injectableValues.addValue(Settings.class, this.settings);
         DefaultObjectMapper.inject(injectableValues);
         NonValidatingObjectMapper.inject(injectableValues);
 
         client = !"node".equals(this.settings.get(OpenSearchSecuritySSLPlugin.CLIENT_TYPE));
         
-        httpSSLEnabled = settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_HTTP_ENABLED,
+        httpSSLEnabled = this.settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_HTTP_ENABLED,
                 SSLConfigConstants.SECURITY_SSL_HTTP_ENABLED_DEFAULT);
-        transportSSLEnabled = settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_TRANSPORT_ENABLED,
+        transportSSLEnabled = this.settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_TRANSPORT_ENABLED,
                 SSLConfigConstants.SECURITY_SSL_TRANSPORT_ENABLED_DEFAULT);
-        extendedKeyUsageEnabled = settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_TRANSPORT_EXTENDED_KEY_USAGE_ENABLED,
+        extendedKeyUsageEnabled = this.settings.getAsBoolean(SSLConfigConstants.SECURITY_SSL_TRANSPORT_EXTENDED_KEY_USAGE_ENABLED,
                 SSLConfigConstants.SECURITY_SSL_TRANSPORT_EXTENDED_KEY_USAGE_ENABLED_DEFAULT);
 
         if (!httpSSLEnabled && !transportSSLEnabled) {
@@ -215,10 +215,10 @@ public class OpenSearchSecuritySSLPlugin extends Plugin implements SystemIndexPl
             System.err.println("SSL not activated for http and/or transport.");
         }
         
-        if(ExternalSecurityKeyStore.hasExternalSslContext(settings)) {
-            this.sks = new ExternalSecurityKeyStore(settings);
+        if(ExternalSecurityKeyStore.hasExternalSslContext(this.settings)) {
+            this.sks = new ExternalSecurityKeyStore(this.settings);
         } else {
-            this.sks = new DefaultSecurityKeyStore(settings, configPath);
+            this.sks = new DefaultSecurityKeyStore(this.settings, configPath);
         }
     }
 

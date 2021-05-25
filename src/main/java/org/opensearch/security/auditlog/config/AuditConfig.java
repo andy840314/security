@@ -20,6 +20,7 @@ import org.opensearch.security.auditlog.impl.AuditCategory;
 import org.opensearch.security.compliance.ComplianceConfig;
 import org.opensearch.security.dlic.rest.support.Utils;
 import org.opensearch.security.support.ConfigConstants;
+import org.opensearch.security.support.LegacyOpenDistroConfigConstants;
 import org.opensearch.security.support.WildcardMatcher;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
