@@ -12,17 +12,35 @@
 package org.opensearch.security;
 
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensearch.common.logging.DeprecationLogger;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.security.ssl.util.LegacyOpenDistroSSLSecuritySettings;
+import org.opensearch.security.ssl.util.SSLConfigConstants;
 import org.opensearch.security.ssl.util.SSLSecuritySettings;
+import org.opensearch.security.support.ConfigConstants;
 import org.opensearch.security.support.LegacyOpenDistroSecuritySettings;
 import org.opensearch.security.support.SecuritySettings;
+import org.opensearch.security.test.helper.file.FileHelper;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class SecuritySettingsTests {
+    protected final Logger log = LogManager.getLogger(this.getClass());
+    @Test void testReplaceSettings() throws Exception{
+        
+        Settings oldSettings = Settings.builder().loadFromPath(Paths.get("/Users/ndylin/workspace/security/src/test/resources/auditlog/endpoints/sink/configuration_tls.yml")).build();
+        Settings newSettings = Settings.builder()
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_ENABLED, SSLSecuritySettings.SECURITY_SSL_TRANSPORT_ENABLED.get(oldSettings))
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_KEYSTORE_FILEPATH, SSLSecuritySettings.SECURITY_SSL_TRANSPORT_KEYSTORE_FILEPATH.get(oldSettings))
+                .build();
+        log.warn(newSettings);
+    }
     
     @Test
     public void testLegacyOpenDistroSettingsFallback() {

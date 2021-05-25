@@ -1,5 +1,5 @@
-plugins.security.ssl.transport.enabled: true
-plugins.security.ssl.transport.keystore_filepath: "transport.keystore_filepath"
+plugins.security.ssl.transport.enabled: false
+plugins.security.ssl.transport.keystore_filepath: "xxxxxxxxxxxxxxx"
 plugins.security.ssl.transport.truststore_filepath: "transport.truststore_filepath"
 plugins.security.ssl.transport.enforce_hostname_verification: true
 plugins.security.ssl.transport.resolve_hostname: true

@@ -47,6 +47,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.opensearch.security.auditlog.config.AuditConfig;
+import org.opensearch.security.support.SecuritySettings;
 import org.opensearch.security.support.SecurityUtils;
 import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
@@ -99,6 +100,7 @@ public class ConfigurationRepository {
 
     private ConfigurationRepository(Settings settings, final Path configPath, ThreadPool threadPool,
                                     Client client, ClusterService clusterService, AuditLog auditLog) {
+        //settings = populateFallbackSettings(settings);
         this.securityIndex = settings.get(ConfigConstants.SECURITY_CONFIG_INDEX_NAME, ConfigConstants.SECURITY_DEFAULT_CONFIG_INDEX);
         this.settings = settings;
         this.client = client;
@@ -401,6 +403,136 @@ public class ConfigurationRepository {
     private static String formatDate(long date) {
         return new SimpleDateFormat("yyyy-MM-dd", SecurityUtils.EN_Locale).format(new Date(date));
     }
+    /*private static Settings populateFallbackSettings(Settings oldSettings) {
+        Settings newSettings = Settings.builder()
+                .putList(ConfigConstants.SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES, SecuritySettings.SECURITY_AUDIT_CONFIG_DISABLED_REST_CATEGORIES.get(oldSettings))
+                .put("opendistro_security_config.ssl_dual_mode_enabled", false)
+                // Protected index settings
+                .put("opendistro_security.protected_indices.enabled", false)
+                .putList("opendistro_security.protected_indices.indices", "a", "b")
+                .putList("opendistro_security.protected_indices.roles", "a", "b")
+                // System index settings
+                .put("opendistro_security.system_indices.enabled", false)
+                .putList("opendistro_security.system_indices.indices", "a", "b")
+
+                .putList("opendistro_security.authcz.admin_dn", "a", "b")
+                .put("opendistro_security.config_index_name", "test")
+
+                .put("opendistro_security.authcz.impersonation_dn.1.value", "value 1")
+                .put("opendistro_security.authcz.impersonation_dn.2.value", "value 2")
+
+                .put("opendistro_security.cert.oid", "test")
+                .put("opendistro_security.cert.intercluster_request_evaluator_class", "test")
+                .putList("opendistro_security.nodes_dn", "a", "b")
+                .put("opendistro_security.nodes_dn_dynamic_config_enabled", false)
+                .put("opendistro_security.enable_snapshot_restore_privilege", false)
+                .put("opendistro_security.check_snapshot_restore_write_privileges", false)
+                .put("opendistro_security.disabled", false)
+                .put("opendistro_security.cache.ttl_minutes", 12)
+                //security
+                .put("opendistro_security.advanced_modules_enabled", false)
+                .put("opendistro_security.allow_unsafe_democertificates", false)
+                .put("opendistro_security.allow_default_init_securityindex", false)
+                .put("opendistro_security.background_init_if_securityindex_not_exist", false)
+
+                .put("opendistro_security.authcz.rest_impersonation_user.1.value", "value 1")
+                .put("opendistro_security.authcz.rest_impersonation_user.2.value", "value 2")
+                .copy(ConfigConstants.SECURITY_RESTAPI_ENDPOINTS_DISABLED + ".", SecuritySettings.SECURITY_RESTAPI_ENDPOINTS_DISABLED.get(oldSettings))
+                //.put(SecuritySettings.SECURITY_RESTAPI_ENDPOINTS_DISABLED.get(oldSettings))
+
+                .put("opendistro_security.roles_mapping_resolution", "test")
+                .put("opendistro_security.disable_envvar_replacement", false)
+                //Security - Audit
+                .put("opendistro_security.audit.type", "test")
+
+                .put("opendistro_security.audit.routes.1.value", "value 1")
+                .put("opendistro_security.audit.routes.2.value", "value 2")
+
+                .put("opendistro_security.audit.endpoints.1.value", "value 1")
+                .put("opendistro_security.audit.endpoints.2.value", "value 2")
+
+                .put("opendistro_security.audit.threadpool.size", 12)
+                .put("opendistro_security.audit.threadpool.max_queue_len", 12)
+                .put("opendistro_security.audit.log_request_body", false)
+                .put("opendistro_security.audit.resolve_indices", false)
+                .put("opendistro_security.audit.enable_rest", false)
+                .put("opendistro_security.audit.enable_transport", false)
+                .putList("opendistro_security.audit.config.disabled_transport_categories", "a", "b")
+                .putList("opendistro_security.audit.config.disabled_rest_categories", "a", "b")
+                .putList("opendistro_security.audit.ignore_users", "a", "b")
+                .putList("opendistro_security.audit.ignore_requests", "a", "b")
+                .put("opendistro_security.audit.resolve_bulk_requests", false)
+                .put("opendistro_security.audit.exclude_sensitive_headers", false)
+                // Security - Audit - Sink
+                .put("opendistro_security.audit.config.index", "test")
+                .put("opendistro_security.audit.config.type", "test")
+                // External OpenSearch
+                .putList("opendistro_security.audit.config.http_endpoints", "a", "b")
+                .put("opendistro_security.audit.config.username", "test")
+                .put("opendistro_security.audit.config.password", "test")
+                .put("opendistro_security.audit.config.enable_ssl", false)
+                .put("opendistro_security.audit.config.verify_hostnames", false)
+                .put("opendistro_security.audit.config.enable_ssl_client_auth", false)
+                .put("opendistro_security.audit.config.pemcert_content", "test")
+                .put("opendistro_security.audit.config.pemcert_filepath", "test")
+                .put("opendistro_security.audit.config.pemkey_content", "test")
+                .put("opendistro_security.audit.config.pemkey_filepath", "test")
+                .put("opendistro_security.audit.config.pemkey_password", "test")
+                .put("opendistro_security.audit.config.pemtrustedcas_content", "test")
+                .put("opendistro_security.audit.config.pemtrustedcas_filepath", "test")
+                .put("opendistro_security.audit.config.cert_alias", "test")
+                .putList("opendistro_security.audit.config.enabled_ssl_ciphers", "a", "b")
+                .putList("opendistro_security.audit.config.enabled_ssl_protocols", "a", "b")
+                // Webhooks
+                .put("opendistro_security.audit.config.webhook.url", "test")
+                .put("opendistro_security.audit.config.webhook.format", "test")
+                .put("opendistro_security.audit.config.webhook.ssl.verify", false)
+                .put("opendistro_security.audit.config.webhook.ssl.pemtrustedcas_filepath", "test")
+                .put("opendistro_security.audit.config.webhook.ssl.pemtrustedcas_content", "test")
+                // Log4j
+                .put("opendistro_security.audit.config.log4j.logger_name", "test")
+                .put("opendistro_security.audit.config.log4j.level", "test")
+                // Kerberos
+                .put("opendistro_security.kerberos.krb5_filepath", "test")
+                .put("opendistro_security.kerberos.acceptor_keytab_filepath", "test")
+                .put("opendistro_security.kerberos.acceptor_principal", "test")
+                // Open Distro Security - REST API
+                .putList("opendistro_security.restapi.roles_enabled", "a", "b")
+
+                .put("opendistro_security.restapi.endpoints_disabled.1.value", "value 1")
+                .put("opendistro_security.restapi.endpoints_disabled.2.value", "value 2")
+
+                .put("opendistro_security.restapi.password_validation_regex", "test")
+                .put("opendistro_security.restapi.password_validation_error_message", "test")
+                // Compliance
+                .putList("opendistro_security.compliance.history.write.watched_indices", "a", "b")
+                .putList("opendistro_security.compliance.history.read.watched_fields", "a", "b")
+                .put("opendistro_security.compliance.history.write.metadata_only", false)
+                .put("opendistro_security.compliance.history.read.metadata_only", false)
+                .put("opendistro_security.compliance.history.write.log_diffs", false)
+                .put("opendistro_security.compliance.history.external_config_enabled", false)
+                .putList("opendistro_security.compliance.history.read.ignore_users", "a", "b")
+                .putList("opendistro_security.compliance.history.write.ignore_users", "a", "b")
+                .put("opendistro_security.compliance.disable_anonymous_authentication", false)
+                .putList("opendistro_security.compliance.immutable_indices", "a", "b")
+                .put("opendistro_security.compliance.salt", "test")
+                .put("opendistro_security.compliance.history.internal_config_enabled", false)
+                .put("opendistro_security.filter_securityindex_from_all_requests", false)
+                //compat
+                .put("opendistro_security.unsupported.disable_intertransport_auth_initially", false)
+                .put("opendistro_security.unsupported.disable_rest_auth_initially", false)
+                // system integration
+                .put("opendistro_security.unsupported.restore.securityindex.enabled", false)
+                .put("opendistro_security.unsupported.inject_user.enabled", false)
+                .put("opendistro_security.unsupported.inject_user.admin.enabled", false)
+                .put("opendistro_security.unsupported.allow_now_in_dls", false)
+                .put("opendistro_security.unsupported.restapi.allow_securityconfig_modification", false)
+                .put("opendistro_security.unsupported.load_static_resources", false)
+                .put("opendistro_security.ssl_cert_reload_enabled", false)
+                .put("opendistro_security.unsupported.accept_invalid_config", false)
+                .build();
+        return oldSettings;
+    }*/
 
     public static int getDefaultConfigVersion() {
         return ConfigurationRepository.DEFAULT_CONFIG_VERSION;
