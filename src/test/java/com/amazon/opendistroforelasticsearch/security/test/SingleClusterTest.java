@@ -40,6 +40,8 @@ import com.amazon.opendistroforelasticsearch.security.test.helper.cluster.Cluste
 import com.amazon.opendistroforelasticsearch.security.test.helper.cluster.ClusterInfo;
 import com.amazon.opendistroforelasticsearch.security.test.helper.rest.RestHelper;
 
+import java.util.List;
+
 public abstract class SingleClusterTest extends AbstractSecurityUnitTest {
 
     private static final int DEFAULT_MASTER_NODE_NUM = 3;
@@ -69,6 +71,13 @@ public abstract class SingleClusterTest extends AbstractSecurityUnitTest {
 
     protected void setup(Settings initTransportClientSettings, DynamicSecurityConfig dynamicSecuritySettings, Settings nodeOverride, boolean initOpendistroSecurityIndex) throws Exception {
         setup(initTransportClientSettings, dynamicSecuritySettings, nodeOverride, initOpendistroSecurityIndex, ClusterConfiguration.DEFAULT);
+    }
+
+    protected void restart(Settings initTransportClientSettings, DynamicSecurityConfig dynamicSecuritySettings, Settings nodeOverride, boolean initOpendistroSecurityIndex) throws Exception {
+        clusterInfo = clusterHelper.startCluster(minimumSecuritySettings(ccs(nodeOverride)), ClusterConfiguration.DEFAULT);
+        if(initOpendistroSecurityIndex && dynamicSecuritySettings != null) {
+            initialize(clusterInfo, initTransportClientSettings, dynamicSecuritySettings);
+        }
     }
 
     private Settings ccs(Settings nodeOverride) throws Exception {
@@ -117,6 +126,12 @@ public abstract class SingleClusterTest extends AbstractSecurityUnitTest {
         Assert.assertNull("No cluster", clusterInfo);
         clusterInfo = clusterHelper.startCluster(minimumSecuritySettingsSslOnlyWithOneNodeNonSSL(nodeOverride,
                 DEFAULT_FIRST_DATA_NODE_NUM), ClusterConfiguration.DEFAULT_ONE_DATA_NODE_WITHOUT_SECURITY_PLUGIN);
+    }
+
+    protected void setupGenericNodes(List<Settings> nodeOverride, List<Boolean> sslOnly, ClusterConfiguration clusterConfiguration) throws Exception {
+        Assert.assertNull("No cluster", clusterInfo);
+        clusterInfo = clusterHelper.startCluster(genericMinimumSecuritySettings(nodeOverride, sslOnly),
+                clusterConfiguration);
     }
 
     protected RestHelper restHelper() {
