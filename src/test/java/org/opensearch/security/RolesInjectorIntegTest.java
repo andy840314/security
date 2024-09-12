@@ -68,7 +68,7 @@ public class RolesInjectorIntegTest extends SingleClusterTest {
                                                    IndexNameExpressionResolver indexNameExpressionResolver,
                                                    Supplier<RepositoriesService> repositoriesServiceSupplier) {
             if(injectedRoles != null)
-                threadPool.getThreadContext().putTransient(ConfigConstants.OPENDISTRO_SECURITY_INJECTED_ROLES, injectedRoles);
+                threadPool.getThreadContext().putTransient(ConfigConstants.SECURITY_INJECTED_ROLES, injectedRoles);
             return new ArrayList<>();
         }
     }
@@ -105,7 +105,7 @@ public class RolesInjectorIntegTest extends SingleClusterTest {
                 .put("path.home", "./target")
                 .put("node.name", "testclient")
                 .put("discovery.initial_state_timeout", "8s")
-                .put("opendistro_security.allow_default_init_securityindex", "true")
+                .put("plugins.security.allow_default_init_securityindex", "true")
                 .putList("discovery.zen.ping.unicast.hosts", clusterInfo.nodeHost + ":" + clusterInfo.nodePort)
                 .build();
 

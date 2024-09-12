@@ -58,7 +58,7 @@ public class CompatConfig {
     
     //true is default
     public boolean restAuthEnabled() {
-        final boolean restInitiallyDisabled = staticSettings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_DISABLE_REST_AUTH_INITIALLY, false);
+        final boolean restInitiallyDisabled = staticSettings.getAsBoolean(ConfigConstants.SECURITY_UNSUPPORTED_DISABLE_REST_AUTH_INITIALLY, false);
         final boolean isTraceEnabled = log.isTraceEnabled();
         if(restInitiallyDisabled) {
             if(dcm == null) {
@@ -69,7 +69,7 @@ public class CompatConfig {
             } else {
                 final boolean restDynamicallyDisabled = dcm.isRestAuthDisabled();
                 if (isTraceEnabled) {
-                    log.trace("opendistro_security.dynamic.disable_rest_auth {}", restDynamicallyDisabled);
+                    log.trace("plugins.security.dynamic.disable_rest_auth {}", restDynamicallyDisabled);
                 }
                 return !restDynamicallyDisabled;
             }
@@ -81,7 +81,7 @@ public class CompatConfig {
     
     //true is default
     public boolean transportInterClusterAuthEnabled() {
-        final boolean interClusterAuthInitiallyDisabled = staticSettings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_DISABLE_INTERTRANSPORT_AUTH_INITIALLY, false);
+        final boolean interClusterAuthInitiallyDisabled = staticSettings.getAsBoolean(ConfigConstants.SECURITY_UNSUPPORTED_DISABLE_INTERTRANSPORT_AUTH_INITIALLY, false);
         final boolean isTraceEnabled = log.isTraceEnabled();
         if(interClusterAuthInitiallyDisabled) {
             if(dcm == null) {
@@ -92,7 +92,7 @@ public class CompatConfig {
             } else {
                 final boolean interClusterAuthDynamicallyDisabled = dcm.isInterTransportAuthDisabled();
                 if (isTraceEnabled) {
-                    log.trace("opendistro_security.dynamic.disable_intertransport_auth {}", interClusterAuthDynamicallyDisabled);
+                    log.trace("plugins.security.dynamic.disable_intertransport_auth {}", interClusterAuthDynamicallyDisabled);
                 }
                 return !interClusterAuthDynamicallyDisabled;
             }
