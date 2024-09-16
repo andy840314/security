@@ -51,7 +51,7 @@ public class SlowIntegrationTests extends SingleClusterTest {
     public void testCustomInterclusterRequestEvaluator() throws Exception {
         
         final Settings settings = Settings.builder()
-                .put(ConfigConstants.OPENDISTRO_SECURITY_INTERCLUSTER_REQUEST_EVALUATOR_CLASS, "org.opensearch.security.AlwaysFalseInterClusterRequestEvaluator")
+                .put(ConfigConstants.SECURITY_INTERCLUSTER_REQUEST_EVALUATOR_CLASS, "org.opensearch.security.AlwaysFalseInterClusterRequestEvaluator")
                 .put("discovery.initial_state_timeout","8s")
                 .build();
         setup(Settings.EMPTY, null, settings, false, ClusterConfiguration.DEFAULT ,5,1);
@@ -109,8 +109,8 @@ public class SlowIntegrationTests extends SingleClusterTest {
                 .put("node.name", "transportclient")
                 .put("discovery.initial_state_timeout","8s")
                 .putList("discovery.zen.ping.unicast.hosts", clusterInfo.nodeHost+":"+clusterInfo.nodePort)
-                .put("opendistro_security.ssl.transport.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("kirk-keystore.jks"))
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS,"kirk")
+                .put("plugins.security.ssl.transport.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("kirk-keystore.jks"))
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS,"kirk")
                 .build();
     
         log.debug("Start node client");
@@ -143,8 +143,8 @@ public class SlowIntegrationTests extends SingleClusterTest {
                 .put("node.name", "transportclient")
                 .put("discovery.initial_state_timeout","8s")
                 .putList("discovery.zen.ping.unicast.hosts", clusterInfo.nodeHost+":"+clusterInfo.nodePort)
-                .put("opendistro_security.ssl.transport.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("spock-keystore.jks"))
-                .put(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS,"spock")
+                .put("plugins.security.ssl.transport.keystore_filepath", FileHelper.getAbsoluteFilePathFromClassPath("spock-keystore.jks"))
+                .put(SSLConfigConstants.SECURITY_SSL_TRANSPORT_KEYSTORE_ALIAS,"spock")
                 .build();
     
         log.debug("Start node client");

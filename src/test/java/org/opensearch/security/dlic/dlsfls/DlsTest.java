@@ -188,8 +188,8 @@ public class DlsTest extends AbstractDlsFlsTest{
 
 
         Assert.assertEquals(HttpStatus.SC_OK, (res = rh.executePostRequest("_msearch?pretty", msearchBody, encodeBasicHeader("dept_manager", "password"))).getStatusCode());
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_dls_query"));
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_fls_fields"));
+        Assert.assertFalse(res.getBody().contains("security_dls_query"));
+        Assert.assertFalse(res.getBody().contains("security_fls_fields"));
         Assert.assertTrue(res.getBody().contains("\"amount\" : 1500"));
         Assert.assertTrue(res.getBody().contains("\"failed\" : 0"));
 
@@ -210,8 +210,8 @@ public class DlsTest extends AbstractDlsFlsTest{
             "}";
 
         Assert.assertEquals(HttpStatus.SC_OK, (res = rh.executePostRequest("_mget?pretty", mgetBody, encodeBasicHeader("dept_manager", "password"))).getStatusCode());
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_dls_query"));
-        Assert.assertFalse(res.getBody().contains("_opendistro_security_fls_fields"));
+        Assert.assertFalse(res.getBody().contains("security_dls_query"));
+        Assert.assertFalse(res.getBody().contains("security_fls_fields"));
         Assert.assertTrue(res.getBody().contains("amount"));
         Assert.assertTrue(res.getBody().contains("\"found\" : false"));
 

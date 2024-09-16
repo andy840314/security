@@ -1154,7 +1154,7 @@ class DlsFlsFilterLeafReader extends SequentialStoredFieldsLeafReader  {
     @SuppressWarnings("unchecked")
     private MaskedFieldsMap getRuntimeMaskedFieldInfo() {
         final Map<String, Set<String>> maskedFieldsMap = (Map<String, Set<String>>) HeaderHelper.deserializeSafeFromHeader(threadContext,
-                ConfigConstants.OPENDISTRO_SECURITY_MASKED_FIELD_HEADER);
+                ConfigConstants.SECURITY_MASKED_FIELD_HEADER);
         final String maskedEval = SecurityUtils.evalMap(maskedFieldsMap, indexService.index().getName());
 
         if(maskedEval != null) {
@@ -1255,11 +1255,11 @@ class DlsFlsFilterLeafReader extends SequentialStoredFieldsLeafReader  {
 
 
     private String getRuntimeActionName() {
-        return (String) threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_ACTION_NAME);
+        return (String) threadContext.getTransient(ConfigConstants.SECURITY_ACTION_NAME);
     }
 
     private boolean isSuggest() {
-        return threadContext.getTransient("_opendistro_security_issuggest") == Boolean.TRUE;
+        return threadContext.getTransient("security_issuggest") == Boolean.TRUE;
     }
 
     private boolean applyDlsHere() {
